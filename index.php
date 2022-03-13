@@ -19,15 +19,28 @@ if (!in_array($action, ['login', 'logout', 'signup'])) {
 
 switch ($action) {
     case 'login':
+        $title = 'Connexion';
+        $description = 'Connectez-vous pour accédez à votre compte en un clic !';
+        $keywords = 'connexion, login, signin, se connecter, s\'identifier, s\'authentifier, accéder à un compte';
         $form = new LoginForm(APP_BASE);
         break;
     case 'logout':
+        $title = 'Déconnexion';
+        $description = 'En cliquant sur ce bouton, vous vous déconnectez de votre compte.';
+        $keywords = 'deconnexion, logout, signout, se déconnecter, quitter le site, quitter le compte revenir plus tard';
         $form = new LogoutForm(APP_BASE);
         break;
     case 'signup':
+        $title = 'Inscription';
+        $description = 'Inscrivez-vous gratuitement pour devenir membre de notre communauté !';
+        $keywords = 'inscription, signup, signin, s\'inscrire, devenir membre, créer un compte';
         $form = new SignupForm(APP_BASE);
         break;
     default:
+        $title = 'Rejoignez-nous !';
+        $description = 'Créez votre compte pour accéder à toutes les fonctionnalités de notre site.';
+        $keywords = 'inscription, signup, signin, s\'inscrire, devenir membre, créer un compte; se connecter, s\'identifier, s\'authentifier, accéder à un compte, page d\'accueil, demarrer';
+        $motivation = '<p>Rejoignez-nous la communauté la plus simple et cool.</p>';
         $form = new JoinForm(APP_BASE);
         if ($form->validate($action, APP_BASE . $path, $_SERVER['REQUEST_METHOD'])) {
             $action = $users->findByEmail($email = $form->getValue('email')) ? 'login' : 'signup';
@@ -39,6 +52,10 @@ switch ($action) {
 $view = view($path, [
     'pdo' => $pdo,
     'form' => $form,
+    'title' => $title,
+    'description' => $description,
+    'keywords' => $keywords,
+    'motivation' => $motivation ??= '',
 ]);
 
 if (!isset($view)) {
