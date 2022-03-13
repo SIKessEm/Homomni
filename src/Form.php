@@ -7,10 +7,47 @@ class Form {
                 'type' => 'email',
                 'placeholder' => 'Entrez votre e-mail',
                 'required' => true,
-                'validation' => [
-                    'type' => 'email',
-                    'message' => 'Veuillez entrer une adresse e-mail valide'
-                ],
+                'minlength' => 5,
+                'maxlength' => 255,
+            ],
+        ],
+        'login' => [
+            'email' => [
+                'type' => 'email',
+                'placeholder' => 'Entrez votre e-mail',
+                'required' => true,
+                'minlength' => 5,
+                'maxlength' => 255,
+            ],
+            'password' => [
+                'type' => 'password',
+                'placeholder' => 'Entrez votre mot de passe',
+                'required' => true,
+                'minlength' => 5,
+                'maxlength' => 255,
+            ],
+        ],
+        'signup' => [
+            'email' => [
+                'type' => 'email',
+                'placeholder' => 'Entrez votre e-mail',
+                'required' => true,
+                'minlength' => 5,
+                'maxlength' => 255,
+            ],
+            'password' => [
+                'type' => 'password',
+                'placeholder' => 'Entrez votre mot de passe',
+                'required' => true,
+                'minlength' => 5,
+                'maxlength' => 255,
+            ],
+            'password_confirm' => [
+                'type' => 'password',
+                'placeholder' => 'Confirmez votre mot de passe',
+                'required' => true,
+                'minlength' => 5,
+                'maxlength' => 255,
             ],
         ],
     ];
@@ -113,20 +150,40 @@ class Form {
             }
             return $field;
         }
-        if (isset($field['validation'])) {
-            $validation = $field['validation'];
-            if (isset($validation['type'])) {
-                switch ($validation['type']) {
-                    case 'email':
-                        if (!filter_var($this->values[$name], FILTER_VALIDATE_EMAIL)) {
-                            $this->errors[$name] = $validation['message'] ?? "Le champ $name doit être une adresse e-mail valide";
-                            return null;
-                        }
-                        break;
-                    default:
-                        throw new Exception('Validation type not found');
+        $value = $this->values[$name];
+        if (isset($field['minlength']) && mb_strlen($value) < $field['minlength']) {
+            $this->errors[$name] = "Le champ $name doit contenir au moins {$field['minlength']} caractères";
+            return null;
+        }
+        if (isset($field['maxlength']) && mb_strlen($value) > $field['maxlength']) {
+            $this->errors[$name] = "Le champ $name doit contenir au plus {$field['maxlength']} caractères";
+            return null;
+        }
+        switch ($field['type']) {
+            case 'email':
+                if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                    $this->errors[$name] = $validation['message'] ?? "Le champ $name doit être une adresse e-mail valide";
+                    return null;
                 }
-            }
+                break;
+            case 'url':
+                if (!filter_var($value, FILTER_VALIDATE_URL)) {
+                    $this->errors[$name] = $validation['message'] ?? "Le champ $name doit être une URL valide";
+                    return null;
+                }
+                break;
+            case 'password':
+                if (empty($value)) {
+                    $this->errors[$name] = $validation['message'] ?? "Le champ $name doit être un mot de passe";
+                    return null;
+                }
+                if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/', $value)) {
+                    $this->errors[$name] = $validation['message'] ?? "Le champ $name doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial";
+                    return null;
+                }
+                break;
+            default:
+                throw new Exception('Validation type not found');
         }
         return $field;
     }
