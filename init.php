@@ -69,3 +69,18 @@ function style(string $name, bool $use_content = false): string {
     }
     return $style;
 }
+
+function view(string $name, array $data = []): string {
+    $path = APP_ROOT . '/web/views/' . $name;
+    if (is_dir($path)) {
+        $path .= '/index.php';
+    }
+    if (is_file($path)) {
+        ob_start();
+        extract($data);
+        include $path;
+        $view = ob_get_clean();
+        return $view;
+    }
+    return null;
+}
