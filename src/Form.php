@@ -106,11 +106,29 @@ class Form {
 
     public function generate(): string {
         $render = "<form action='{$this->path}' method='{$this->verb}'" . ($this->hasErrors() ? ' class="has-errors"' : '') . '>';
+        $render .= $this->generateErrors();
         $render .= $this->generateFields();
         $render .= "<input type='hidden' name='token' value='{$this->generateToken()}'/>";
         $render .= "<button type='submit' name='action' value='{$this->name}'>Envoyer</button>";
         $render .= "</form>";
         return $render;
+    }
+
+    public function generateErrors(): string {
+        $errors = $this->getErrors();
+        if ($c = count($errors)) {
+            if ($c === 1) {
+                $error = $errors[array_key_first($errors)];
+                return "<p class='error-message'>$error</p>";
+            }
+            $render = "<ul class='error-messages'>";
+            foreach ($errors as $name => $error) {
+                $render .= "<li class='error-message'><label for='{$name}Input'><small>$error</small></label></li>";
+            }
+            $render .= "</ul>";
+            return $render;
+        }
+        return '';
     }
 
     public function generateFields(): string {

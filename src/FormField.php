@@ -76,33 +76,47 @@ class FormField {
     }
 
     public function generate(): string {
-        $render = '';
+        $render = '<span class="form-field';
         $name = $this->getName();
         $type = $this->getType();
+
+        $error = $this->getError($name);
+        if ($error) {
+            $render .= ' is-invalid';
+        }
+        $render .= '">';
+
         $label = $this->getLabel();
         $placeholder = $this->getPlaceholder();
+
         if ('' !== $label) {
-            $render .= "<label for='{$name}'>{$label}</label>";
+            $render .= "<label for='{$name}Input'>{$label}</label>";
         }
-        $render .= "<input type='{$type}' name='{$name}'";
+        $render .= "<input type='{$type}' id='{$name}Input' name='{$name}'";
         if (!$placeholder) {
             $placeholder = 'Entrez ' . lcfirst($label);
         }
         $render .= " placeholder='{$placeholder}'";
 
+        if ($error) {
+            $render .= " title='{$error}'";
+            $this->setOption('invalid', true);
+        }
+
         foreach ($this->getOptions() as $option => $value) {
-            $render .= is_bool($value) || is_int($option) ? " {$option}" : " {$option}='{$value}'";
+            $render .= is_bool($value) || is_int($option) ? " $option" : " $option='$value'";
         }
 
         if ($value = $this->getValue($name)) {
             $render .= " value='{$value}'";
         }
 
-        if ($error = $this->getError($name)) {
-            $render .= " class='error'";
-            $render .= " title='{$error}'";
-        }
         $render .= '>';
+
+        if ($error) {
+            $render .= "<small class='error-message'>$error</small>";
+        }
+        $render .= '</span>';
         return $render;
     }
 

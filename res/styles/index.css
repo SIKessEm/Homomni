@@ -49,12 +49,43 @@ form {
     display: flex;
     flex-direction: column;
     margin: 24px auto;
+    min-width: 300px;
+    max-width: 500px;
+    padding: 12px 24px;
+}
+
+form.has-errors .error-messages {
+    display: block;
+    color: #f00;
+    margin-bottom: 1em;
+}
+
+form.has-errors .error-messages .error-message {
+    background-color: #ff7800;
+    display: inline-block;
+    color: #fff;
+    padding: 12px;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 12px;
 }
 
 input, button {
     margin: 0.5em 0;
     font-size: 1em;
     padding: 0.5em;
+}
+
+input:invalid,
+form-field.is-invalid input {
+    border-color: red;
+}
+
+form.has-errors .error-message {
+    color: red;
 }
 
 button {
