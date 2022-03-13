@@ -1,6 +1,6 @@
 <?php
 
-class User {
+class UserEntity extends Entity {
     protected int $user_id;
     protected string $user_name;
     protected string $user_email;

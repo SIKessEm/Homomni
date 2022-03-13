@@ -5,7 +5,7 @@ $pdo = require APP_ROOT . '/pdo.php';
 $pdo->exec('SET NAMES UTF8');
 
 
-$users = new Users($pdo);
+$users = new UsersManager($pdo);
 if (!$users->tableExists()) {
     $users->createTable();
 }
