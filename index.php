@@ -21,7 +21,8 @@ if (!in_array($action, ['login', 'logout', 'signup'])) {
 
 $form = new Form('join', APP_BASE . '', 'post');
 if ($form->validate($action, APP_BASE . $path, $_SERVER['REQUEST_METHOD'])) {
-    die('Nous allons passer au traitement...');
+    $action = $users->findByEmail($email = $form->getValue('email')) ? 'login' : 'signup';
+    redirectTo("/?action=$action&email=$email");
 }
 
 $view = view($path, [
