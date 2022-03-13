@@ -17,10 +17,23 @@ if (!in_array($action, ['login', 'logout', 'signup'])) {
     $action = 'join';
 }
 
-$form = new Form('join', APP_BASE . '', 'post');
+$form = new Form($action, APP_BASE . '', 'post');
 if ($form->validate($action, APP_BASE . $path, $_SERVER['REQUEST_METHOD'])) {
-    $action = $users->findByEmail($email = $form->getValue('email')) ? 'login' : 'signup';
-    redirectTo("/?action=$action&email=$email");
+    switch ($action) {
+        case 'login':
+            die('login');
+            break;
+        case 'logout':
+            die('logout');
+            break;
+        case 'signup':
+            die('signup');
+            break;
+        default:
+            $action = $users->findByEmail($email = $form->getValue('email')) ? 'login' : 'signup';
+            redirectTo("/?action=$action&email=$email");
+            break;
+    }
 }
 
 $view = view($path, [
