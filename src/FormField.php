@@ -166,7 +166,7 @@ class FormField {
                 }
                 break;
             case 'password':
-                if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/', $value)) {
+                if (!preg_match('/[A-Z]/', $value) || !preg_match('/[a-z]/', $value) || !preg_match('/[0-9]/', $value) || !preg_match('/[^a-zA-Z0-9\s]/s', $value)) {
                     $form->setError($name, "Le champ $name doit contenir au moins 8 caractères, dont une majuscule, une minuscule, un chiffre et un caractère spécial");
                     return false;
                 }
