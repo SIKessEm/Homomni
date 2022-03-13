@@ -1,78 +1,11 @@
 <?php
 
 class Form {
-    const FIELDS = [
-        'join' => [
-            'email' => [
-                'type' => 'email',
-                'placeholder' => 'Entrez votre e-mail',
-                'options' => [
-                    'required' => true,
-                    'minlength' => 5,
-                    'maxlength' => 255
-                ]
-            ],
-        ],
-        'login' => [
-            'email' => [
-                'type' => 'email',
-                'placeholder' => 'Entrez votre e-mail',
-                'options' => [
-                    'required' => true,
-                    'minlength' => 5,
-                    'maxlength' => 255
-                ]
-            ],
-            'password' => [
-                'type' => 'password',
-                'placeholder' => 'Entrez votre mot de passe',
-                'options' => [
-                    'required' => true,
-                    'minlength' => 5,
-                    'maxlength' => 255
-                ]
-            ],
-        ],
-        'signup' => [
-            'email' => [
-                'type' => 'email',
-                'placeholder' => 'Entrez votre e-mail',
-                'options' => [
-                    'required' => true,
-                    'minlength' => 5,
-                    'maxlength' => 255
-                ]
-            ],
-            'password' => [
-                'type' => 'password',
-                'placeholder' => 'Entrez votre mot de passe',
-                'options' => [
-                    'required' => true,
-                    'minlength' => 5,
-                    'maxlength' => 255
-                ]
-            ],
-            'password_confirm' => [
-                'type' => 'password',
-                'placeholder' => 'Confirmez votre mot de passe',
-                'options' => [
-                    'required' => true,
-                    'minlength' => 5,
-                    'maxlength' => 255
-                ]
-            ],
-        ],
-    ];
-
     public function __construct(string $name, string $path, string  $verb = 'POST') {
-        if (empty($fields = self::FIELDS[$name])) {
-            throw new Exception('Form name not found');
-        }
-
         $this->name = $name;
-        $this->path = $path;
-
-        switch ($this->verb = strtoupper($verb)) {
+        $this->path = strtolower($path);
+        $this->verb = strtoupper($verb);
+        switch ($this->verb) {
             case 'GET':
                 $this->values = $_GET;
                 $this->input = INPUT_GET;
@@ -88,16 +21,6 @@ class Form {
         if (session_status() == PHP_SESSION_NONE) {
             session_start();
         }
-
-        foreach ($fields as $name => $field) {
-            $this->fields[$name] = new FormField($this,
-                name: $name,
-                type: $field['type'],
-                label: $field['label'] ?? '',
-                placeholder: $field['placeholder'] ?? '',
-                options: $field['options'] ?? [],
-            );
-        }
     }
 
     protected array $errors = [];
@@ -105,6 +28,14 @@ class Form {
     protected string $token = '';
     protected array $values = [];
     protected int $input = INPUT_POST;
+
+    public function addField(FormField $field) {
+        $this->fields[] = $field;
+    }
+
+    public function getFields() {
+        return $this->fields;
+    }
 
     public function validate(string $name, string $path, string $verb): bool {
         if (!$this->validateRequest($path, $verb)) {
