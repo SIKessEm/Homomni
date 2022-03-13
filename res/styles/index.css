@@ -77,11 +77,24 @@ input, button {
     margin: 0.5em 0;
     font-size: 1em;
     padding: 0.5em;
+    border-radius: 4px;
 }
 
 input:invalid,
-form-field.is-invalid input {
+.form-field.is-invalid input {
+    -moz-box-shadow: none;
     border-color: red;
+}
+
+input:invalid:focus,
+input:invalid:hover,
+input:invalid:active,
+input:invalid:focus-within,
+.form-field.is-invalid input:hover,
+.form-field.is-invalid input:active,
+.form-field.is-invalid input:focus,
+.form-field.is-invalid input:focus-within {
+    border-color: #ff7800;
 }
 
 form.has-errors .error-message {
