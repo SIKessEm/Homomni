@@ -101,6 +101,16 @@ function json(string $name): ?string {
     return schema($name, 'json');
 }
 
+function redirectTo(string $url, int $code = 302): void {
+    if (headers_sent()) {
+        echo view('redirect', ['url' => $url]);
+    }
+    else {
+        header("Location: $url", true, $code);
+    }
+    exit;
+}
+
 spl_autoload_register(function ($name) {
     $name = str_replace('\\', '/', $name);
     if (is_file($file = APP_ROOT . "/src/$name.php")) {
