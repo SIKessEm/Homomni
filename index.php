@@ -11,8 +11,22 @@ if (!$users->tableExists()) {
 }
 
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$path = preg_replace('/[\/]+/', '/', $path);
+$path = trim($path, '/');
+
+$action = $_REQUEST['action'] ?? '';
+if (!in_array($action, ['login', 'logout', 'signup'])) {
+    $action = 'join';
+}
+
+$form = new Form('join', APP_BASE . '', 'post');
+if ($form->validate($action, APP_BASE . $path, $_SERVER['REQUEST_METHOD'])) {
+    die('Nous allons passer au traitement...');
+}
+
 $view = view($path, [
     'pdo' => $pdo,
+    'form' => $form,
 ]);
 
 if (!isset($view)) {

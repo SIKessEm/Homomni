@@ -65,10 +65,7 @@
             </header>
             <main>
                 <p>Rejoignez-nous la communauté la plus simple et cool.</p>
-                <form method="POST" action="/">
-                    <input type="email" name="user[email]" placeholder="Entrez votre e-mail" required/>
-                    <button type="submit" name="action" value="join">Rejoindre</button>
-                </form>
+                <div><?= $form->generate() ?></div>
             </main>
             <footer>
                 <p>&copy; <?= date('Y') ?> <a href="<?= APP_BASE ?>" title="<?= APP_NAME ?>"><?= APP_NAME ?></a></p>
