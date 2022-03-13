@@ -2,8 +2,6 @@
 require_once __DIR__ . '/init.php';
 
 $pdo = require APP_ROOT . '/pdo.php';
-$pdo->exec('SET NAMES UTF8');
-
 
 $users = new UsersManager($pdo);
 if (!$users->tableExists()) {

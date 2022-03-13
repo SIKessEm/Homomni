@@ -5,7 +5,7 @@ try {
     $name = env('DB_NAME');
     $username = env('DB_USERNAME');
     $password = env('DB_PASSWORD');
-    $charset = env('DB_CHARSET', 'utf8');
+    $charset = env('DB_CHARSET', 'UTF8');
     $dialect = env('DB_DIALECT', 'mysql');
     $dsn = "$dialect:host=$host;port=$port;dbname=$name;charset=$charset";
     $options = [
@@ -14,6 +14,8 @@ try {
         PDO::ATTR_EMULATE_PREPARES => false,
     ];
     $pdo = new PDO($dsn, $username, $password, $options);
+    $pdo->exec("SET NAMES '$charset'");
+
     return $pdo;
 } catch (PDOException $e) {
     echo 'Connection failed: ' . $e->getMessage() . PHP_EOL;
