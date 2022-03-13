@@ -37,6 +37,15 @@ class Form {
         return $this->fields;
     }
 
+    public function getField(string $name): ?FormField {
+        foreach ($this->fields as $field) {
+            if ($name === $field->getName()) {
+                return $field;
+            }
+        }
+        return null;
+    }
+
     public function validate(string $name, string $path, string $verb): bool {
         if (!$this->validateRequest($path, $verb)) {
             return false;
@@ -96,7 +105,7 @@ class Form {
     }
 
     public function generate(): string {
-        $render = "<form action='{$this->path}' method='{$this->verb}'>";
+        $render = "<form action='{$this->path}' method='{$this->verb}'" . ($this->hasErrors() ? ' class="has-errors"' : '') . '>';
         $render .= $this->generateFields();
         $render .= "<input type='hidden' name='token' value='{$this->generateToken()}'/>";
         $render .= "<button type='submit' name='action' value='{$this->name}'>Envoyer</button>";
@@ -112,12 +121,56 @@ class Form {
         return $render;
     }
 
+    public function setValues(array $values): self {
+        foreach ($values as $name => $value) {
+            $this->setValue($name, $value);
+        }
+        return $this;
+    }
+
+    public function setValue(string $name, mixed $value): self {
+        $this->values[$name] = $value;
+        return $this;
+    }
+
+    public function getValues(): array {
+        return $this->values;
+    }
+
+    public function hasValue(string $name): bool {
+        return isset($this->values[$name]);
+    }
+
     public function getValue(string $name): ?string {
         return $this->values[$name] ?? null;
     }
 
+    public function setErrors(array $errors): self {
+        foreach ($errors as $name => $error) {
+            $this->setError($name, $error);
+        }
+        return $this;
+    }
+
+    public function setError(string $name, string $error): self {
+        $this->errors[$name] = $error;
+        return $this;
+    }
+
+    public function hasErrors(): bool {
+        return !empty($this->errors);
+    }
+
+    public function getErrors(): array {
+        return $this->errors;
+    }
+
     public function getError(string $name): ?string {
         return $this->errors[$name] ?? null;
+    }
+
+    public function hasError(string $name): bool {
+        return isset($this->errors[$name]);
     }
 
     public function __toString(): string {

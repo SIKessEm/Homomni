@@ -114,6 +114,10 @@ class FormField {
         return $this->form->getError($this->getName());
     }
 
+    public function hasError(): bool {
+        return $this->form->hasError($this->getName());
+    }
+
     public function validate(): bool {
         $form = $this->form;
         $name = $this->getName();
