@@ -1,11 +1,6 @@
 <?php
-const APP_NAME = 'Homomni';
-const APP_BASE = '/';
-const APP_ICON = 'icon.png';
-const APP_FAVICON = 'favicon.ico';
-const APP_LOGO = 'logo.svg';
-const APP_COLOR = '#788eff';
-const APP_AUTHOR = 'SIGUI Kessé Emmanuel';
+require_once __DIR__ . '/init.php';
+$pdo = require APP_ROOT . '/pdo.php';
 ?>
 <!DOCTYPE html>
 <html lang="fr-CI">
