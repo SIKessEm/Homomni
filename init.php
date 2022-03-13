@@ -48,3 +48,24 @@ function env(string $key, mixed $default = null) {
     }
     return $env[$key] ?? $default;
 }
+
+function style(string $name, bool $use_content = false) {
+    $source_path = APP_ROOT . '/web/styles/' . $name . '.css';
+    $target_path = APP_ROOT . '/client/' . $name . '.css';
+    if (!is_file($target_path) || (filemtime($source_path) > filemtime($target_path))) {
+        ob_start();
+        include $source_path;
+        $style_content = ob_get_clean();
+        file_put_contents($target_path, $style_content);
+        touch($target_path, filemtime($source_path));
+    }
+    if ($use_content) {
+        $content = file_get_contents($target_path);
+        $style = '<style>' . $content . '</style>';
+    }
+    else {
+        $url = APP_BASE . "client/$name.css?v=" . filemtime($target_path);
+        $style = '<link rel="stylesheet" href="' . $url . '.css">';
+    }
+    return $style;
+}

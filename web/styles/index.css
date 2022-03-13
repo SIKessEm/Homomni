@@ -1,0 +1,66 @@
+* {
+    box-sizing: inherit;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: #333;
+    background-color: #fff;
+}
+
+#wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+}
+
+header {
+    color: <?= APP_COLOR ?>;
+    margin-bottom: 1em;
+}
+
+footer {
+    color: <?= APP_COLOR ?>;
+    margin-top: 1em;
+    font-size: 0.875em;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    margin: 24px auto;
+}
+
+input, button {
+    margin: 0.5em 0;
+    font-size: 1em;
+    padding: 0.5em;
+}
+
+button {
+    background-color: <?= APP_COLOR ?>;
+    color: #fff;
+    border: none;
+    border-radius: 0.25em;
+    cursor: pointer;
+}
