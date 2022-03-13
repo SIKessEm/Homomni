@@ -2,19 +2,13 @@
 
 class UserEntity extends Entity {
     protected int $user_id;
-    protected string $user_name;
     protected string $user_email;
     protected string $user_password;
-    protected DateTime $user_created_at;
-    protected DateTime $user_updated_at;
+    protected string $user_created_at;
+    protected string $user_updated_at;
 
-    public function __construct(int $id, string $name, string $email, string $password, DateTime $created_at, DateTime $updated_at) {
-        $this->setId($id);
-        $this->setName($name);
-        $this->setEmail($email);
-        $this->setPassword($password);
-        $this->setCreatedAt($created_at);
-        $this->setUpdatedAt($updated_at);
+    public function __construct(array $data = []) {
+        parent::__construct($data);
     }
 
     public function getId(): int {
@@ -23,14 +17,6 @@ class UserEntity extends Entity {
 
     public function setId(int $id): void {
         $this->user_id = $id;
-    }
-
-    public function getName(): string {
-        return $this->user_name;
-    }
-
-    public function setName(string $name): void {
-        $this->user_name = $name;
     }
 
     public function getEmail(): string {
@@ -49,19 +35,19 @@ class UserEntity extends Entity {
         $this->user_password = $password;
     }
 
-    public function getCreatedAt(): DateTime {
+    public function getCreatedAt(): string {
         return $this->user_created_at;
     }
 
-    public function setCreatedAt(DateTime $created_at): void {
+    public function setCreatedAt(string $created_at): void {
         $this->user_created_at = $created_at;
     }
 
-    public function getUpdatedAt(): DateTime {
+    public function getUpdatedAt(): string {
         return $this->user_updated_at;
     }
 
-    public function setUpdatedAt(DateTime $updated_at): void {
+    public function setUpdatedAt(string $updated_at): void {
         $this->user_updated_at = $updated_at;
     }
 }

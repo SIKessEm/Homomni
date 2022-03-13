@@ -63,10 +63,11 @@ switch ($action) {
             if ($form->hasErrors()) {
                 break;
             }
-            $user = new User();
-            $user->setEmail($email);
-            $user->setPassword(password_hash($password, PASSWORD_DEFAULT));
-            $users->save($user);
+            $user = new UserEntity(array(
+                'email' => $email,
+                'password' => password_hash($password, PASSWORD_DEFAULT),
+            ));
+            $users->add($user);
             $_SESSION['user'] = $user;
             redirectTo(APP_BASE);
         }
@@ -77,7 +78,7 @@ switch ($action) {
         $keywords = 'inscription, signup, signin, s\'inscrire, devenir membre, créer un compte; se connecter, s\'identifier, s\'authentifier, accéder à un compte, page d\'accueil, demarrer';
         $motivation = '<p>Rejoignez-nous la communauté la plus simple et cool.</p>';
         $form = new JoinForm(APP_BASE);
-        if ($form->validate()) {
+        if ($form->validate($action, APP_BASE . $path, $_SERVER['REQUEST_METHOD'])) {
             $action = $users->findByEmail($email = $form->getValue('email')) ? 'login' : 'signup';
             redirectTo("/?action=$action&email=$email");
         }
