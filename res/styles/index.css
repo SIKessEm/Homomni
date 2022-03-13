@@ -54,19 +54,6 @@ form {
     padding: 12px 24px;
 }
 
-form.has-errors .error-messages {
-    display: block;
-    color: #f00;
-    margin-bottom: 1em;
-}
-
-form.has-errors .error-messages .error-message {
-    background-color: #ff7800;
-    display: inline-block;
-    color: #fff;
-    padding: 12px;
-}
-
 .form-field {
     display: flex;
     flex-direction: column;
@@ -97,8 +84,27 @@ input:invalid:focus-within,
     border-color: #ff7800;
 }
 
+.error-message {
+    font-weight: bold;
+}
+
 form.has-errors .error-message {
     color: red;
+}
+
+form.has-errors > .error-messages,
+form.has-errors > .error-message {
+    display: block;
+    color: #f00;
+    margin-bottom: 1em;
+}
+
+form.has-errors > .error-messages .error-message,
+form.has-errors > .error-message {
+    background-color: #ff7800;
+    display: inline-block;
+    color: #fff;
+    padding: 12px;
 }
 
 button {

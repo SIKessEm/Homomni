@@ -119,7 +119,7 @@ class Form {
         if ($c = count($errors)) {
             if ($c === 1) {
                 $error = $errors[array_key_first($errors)];
-                return "<p class='error-message'>$error</p>";
+                return "<p class='error-message'><small>$error</small></p>";
             }
             $render = "<ul class='error-messages'>";
             foreach ($errors as $name => $error) {
