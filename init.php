@@ -9,7 +9,7 @@ const APP_COLOR = '#788eff';
 const APP_AUTHOR = 'SIGUI Kessé Emmanuel';
 
 
-function env(string $key, mixed $default = null) {
+function env(string $key, mixed $default = null): string {
     static $env;
     if (!isset($env)) {
         $env_options = require __DIR__ . '/env.php';
@@ -35,13 +35,13 @@ function env(string $key, mixed $default = null) {
             if (is_array($value)) {
                 foreach ($value as $k => $v) {
                     $name = strtoupper($key) . '_' . strtoupper($k);
-                    $env[$name] = $_ENV = $_SERVER = $v === 'true' ? true : ($v === 'false' ? false : $v);
+                    $env[$name] = $_ENV[$name] = $_SERVER[$name] = $v === 'true' ? true : ($v === 'false' ? false : $v);
                     putenv("$name=$v");
                 }
             }
             else {
                 $name = strtoupper($key);
-                $env[$name] = $_ENV = $_SERVER = $value === 'true' ? true : ($value === 'false' ? false : $value);
+                $env[$name] = $_ENV[$name] = $_SERVER[$name] = $value === 'true' ? true : ($value === 'false' ? false : $value);
                 putenv("$name=$value");
             }
         }
@@ -49,7 +49,7 @@ function env(string $key, mixed $default = null) {
     return $env[$key] ?? $default;
 }
 
-function style(string $name, bool $use_content = false) {
+function style(string $name, bool $use_content = false): string {
     $source_path = APP_ROOT . '/web/styles/' . $name . '.css';
     $target_path = APP_ROOT . '/client/' . $name . '.css';
     if (!is_file($target_path) || (filemtime($source_path) > filemtime($target_path))) {
