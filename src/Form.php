@@ -6,58 +6,71 @@ class Form {
             'email' => [
                 'type' => 'email',
                 'placeholder' => 'Entrez votre e-mail',
-                'required' => true,
-                'minlength' => 5,
-                'maxlength' => 255,
+                'options' => [
+                    'required' => true,
+                    'minlength' => 5,
+                    'maxlength' => 255
+                ]
             ],
         ],
         'login' => [
             'email' => [
                 'type' => 'email',
                 'placeholder' => 'Entrez votre e-mail',
-                'required' => true,
-                'minlength' => 5,
-                'maxlength' => 255,
+                'options' => [
+                    'required' => true,
+                    'minlength' => 5,
+                    'maxlength' => 255
+                ]
             ],
             'password' => [
                 'type' => 'password',
                 'placeholder' => 'Entrez votre mot de passe',
-                'required' => true,
-                'minlength' => 5,
-                'maxlength' => 255,
+                'options' => [
+                    'required' => true,
+                    'minlength' => 5,
+                    'maxlength' => 255
+                ]
             ],
         ],
         'signup' => [
             'email' => [
                 'type' => 'email',
                 'placeholder' => 'Entrez votre e-mail',
-                'required' => true,
-                'minlength' => 5,
-                'maxlength' => 255,
+                'options' => [
+                    'required' => true,
+                    'minlength' => 5,
+                    'maxlength' => 255
+                ]
             ],
             'password' => [
                 'type' => 'password',
                 'placeholder' => 'Entrez votre mot de passe',
-                'required' => true,
-                'minlength' => 5,
-                'maxlength' => 255,
+                'options' => [
+                    'required' => true,
+                    'minlength' => 5,
+                    'maxlength' => 255
+                ]
             ],
             'password_confirm' => [
                 'type' => 'password',
                 'placeholder' => 'Confirmez votre mot de passe',
-                'required' => true,
-                'minlength' => 5,
-                'maxlength' => 255,
+                'options' => [
+                    'required' => true,
+                    'minlength' => 5,
+                    'maxlength' => 255
+                ]
             ],
         ],
     ];
 
     public function __construct(string $name, string $path, string  $verb = 'POST') {
-        if (!isset(self::FIELDS[$name])) {
+        if (empty($fields = self::FIELDS[$name])) {
             throw new Exception('Form name not found');
         }
-        $this->fields = self::FIELDS[$name];
+
         $this->name = $name;
+        $this->path = $path;
 
         switch ($this->verb = strtoupper($verb)) {
             case 'GET':
@@ -71,10 +84,19 @@ class Form {
             default:
                 throw new Exception('Verb not found');
         }
-        $this->path = $path;
 
         if (session_status() == PHP_SESSION_NONE) {
             session_start();
+        }
+
+        foreach ($fields as $name => $field) {
+            $this->fields[$name] = new FormField($this,
+                name: $name,
+                type: $field['type'],
+                label: $field['label'] ?? '',
+                placeholder: $field['placeholder'] ?? '',
+                options: $field['options'] ?? [],
+            );
         }
     }
 
@@ -134,58 +156,12 @@ class Form {
 
     public function validateFields(): array {
         $fields = [];
-        foreach ($this->fields as $name => $field) {
-            if ($field = $this->validateField($name, $field)) {
-                $fields[$name] = $field;
+        foreach ($this->fields as $field) {
+            if ($field->validate()) {
+                $fields[$field->getName()] = $field->getValue();
             }
         }
         return $fields;
-    }
-
-    public function validateField(string $name, array $field): ?array {
-        if (!isset($this->values[$name])) {
-            if (isset($field['required']) && $field['required']) {
-                $this->errors[$name] = "Le champ $name est requis";
-                return null;
-            }
-            return $field;
-        }
-        $value = $this->values[$name];
-        if (isset($field['minlength']) && mb_strlen($value) < $field['minlength']) {
-            $this->errors[$name] = "Le champ $name doit contenir au moins {$field['minlength']} caractères";
-            return null;
-        }
-        if (isset($field['maxlength']) && mb_strlen($value) > $field['maxlength']) {
-            $this->errors[$name] = "Le champ $name doit contenir au plus {$field['maxlength']} caractères";
-            return null;
-        }
-        switch ($field['type']) {
-            case 'email':
-                if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
-                    $this->errors[$name] = $validation['message'] ?? "Le champ $name doit être une adresse e-mail valide";
-                    return null;
-                }
-                break;
-            case 'url':
-                if (!filter_var($value, FILTER_VALIDATE_URL)) {
-                    $this->errors[$name] = $validation['message'] ?? "Le champ $name doit être une URL valide";
-                    return null;
-                }
-                break;
-            case 'password':
-                if (empty($value)) {
-                    $this->errors[$name] = $validation['message'] ?? "Le champ $name doit être un mot de passe";
-                    return null;
-                }
-                if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/', $value)) {
-                    $this->errors[$name] = $validation['message'] ?? "Le champ $name doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial";
-                    return null;
-                }
-                break;
-            default:
-                throw new Exception('Validation type not found');
-        }
-        return $field;
     }
 
     public function generate(): string {
@@ -199,50 +175,14 @@ class Form {
 
     public function generateFields(): string {
         $render = '';
-        foreach ($this->fields as $name => $field) {
-            $render .= $this->generateField(
-                name: $name,
-                type: $field['type'] ?? 'text',
-                label: $field['label'] ?? '',
-                required: $field['required'] ?? false,
-                placeholder: $field['placeholder'] ?? '',
-            );
+        foreach ($this->fields as $field) {
+            $render .= $field->generate();
         }
-        return $render;
-    }
-
-    public function generateField(string $name, string $type, string $label, bool $required = false, string $placeholder = ''): string {
-        $render = '';
-        if ('' !== $label) {
-            $render .= "<label for='{$name}'>{$label}</label>";
-        }
-        $render .= "<input type='{$type}' name='{$name}'";
-        if (!$placeholder) {
-            $placeholder = 'Entrez ' . lcfirst($label);
-        }
-        $render .= " placeholder='{$placeholder}'";
-        if ($required) {
-            $render .= ' required';
-        }
-        if ($value = $this->getValue($name)) {
-            $render .= " value='{$value}'";
-        }
-        if ($error = $this->getError($name)) {
-            $render .= " class='error'";
-            $render .= " title='{$error}'";
-        }
-        $render .= '>';
         return $render;
     }
 
     public function getValue(string $name): ?string {
-        switch ($this->verb) {
-            case 'POST':
-                return $_POST[$name] ?? null;
-            case 'GET':
-                return $_GET[$name] ?? null;
-        }
-        return null;
+        return $this->values[$name] ?? null;
     }
 
     public function getError(string $name): ?string {
