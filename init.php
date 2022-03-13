@@ -50,7 +50,7 @@ function env(string $key, mixed $default = null): string {
 }
 
 function style(string $name, bool $use_content = false): string {
-    $source_path = APP_ROOT . '/web/styles/' . $name . '.css';
+    $source_path = APP_ROOT . '/res/styles/' . $name . '.css';
     $target_path = APP_ROOT . '/client/' . $name . '.css';
     if (!is_file($target_path) || (filemtime($source_path) > filemtime($target_path))) {
         ob_start();
@@ -70,8 +70,8 @@ function style(string $name, bool $use_content = false): string {
     return $style;
 }
 
-function view(string $name, array $data = []): string {
-    $path = APP_ROOT . '/web/views/' . $name;
+function view(string $name, array $data = []): ?string {
+    $path = APP_ROOT . '/res/views/' . $name;
     if (is_dir($path)) {
         $path .= '/index.php';
     }
@@ -84,3 +84,31 @@ function view(string $name, array $data = []): string {
     }
     return null;
 }
+
+function schema(string $name, string $type): ?string {
+    $path = APP_ROOT . "/res/schemas/$name.$type";
+    if (is_file($path)) {
+        return file_get_contents($path);
+    }
+    return null;
+}
+
+function sql(string $name): ?string {
+    return schema($name, 'sql');
+}
+
+function json(string $name): ?string {
+    return schema($name, 'json');
+}
+
+spl_autoload_register(function ($name) {
+    $name = str_replace('\\', '/', $name);
+    if (is_file($file = APP_ROOT . "/src/$name.php")) {
+        require_once $file;
+        if (class_exists($name)) {
+            return;
+        }
+        throw new \Exception("Class $name not found in $file");
+    }
+    throw new \Exception("Class $name not found");
+});
